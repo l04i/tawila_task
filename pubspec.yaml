@@ -31,6 +31,7 @@ dependencies:
   cupertino_icons: ^1.0.6
   flutter:
     sdk: flutter
+  flutter_screenutil: ^5.9.3
   http: ^1.2.1
   provider: ^6.1.2
 
@@ -43,6 +44,21 @@ dev_dependencies:
 # following page: https://dart.dev/tools/pub/pubspec
 # The following section is specific to Flutter packages.
 flutter:
+  assets:
+    - assets/
+
+
+
+  fonts:
+    - family: Montserrat
+      fonts:
+        - asset: /assets/fonts/Montserrat-Regular.ttf
+        - asset: /assets/fonts/Montserrat-Italic.ttf
+
+    - family: Open Sans
+      fonts:
+        - asset: /assets/fonts/OpenSans-Regular.ttf
+        - asset: /assets/fonts/OpenSans-Italic.ttf
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
