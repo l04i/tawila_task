@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:tawila_task/models/restaurant.dart';
 import 'package:http/http.dart' as http;
 
