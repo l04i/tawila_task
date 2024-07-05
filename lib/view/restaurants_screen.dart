@@ -5,9 +5,6 @@ import 'package:tawila_task/constants.dart';
 import 'package:tawila_task/providers/restaurants_provider.dart';
 import 'package:tawila_task/view/reusable_widgets.dart';
 
-// color issue (icons , container , fouced border)
-// font bold issue
-
 class RestaurantsScreen extends StatefulWidget {
   const RestaurantsScreen({super.key});
 
@@ -39,55 +36,61 @@ class _RestaurantsScreenState extends State<RestaurantsScreen> {
             ));
           } else if (restaurantsProvider.errorMessage != null) {
             return ErrorMessageView(
-                errorMessage: restaurantsProvider.errorMessage!,
-                refresh: () {
-                  _getRestaurants(context);
-                });
+              errorMessage: restaurantsProvider.errorMessage!,
+              refresh: () => _getRestaurants(context),
+            );
           } else {
             return Padding(
               padding: EdgeInsets.all(10.h),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const CustomAppBar(),
-                    SizedBox(
-                      height: 10.h,
-                    ),
-                    Center(
-                      child: Text(
-                        "Taste the World,",
+              child: RefreshIndicator(
+                backgroundColor: AppColors.secondary,
+                color: AppColors.primary,
+                onRefresh: () => _getRestaurants(context),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const CustomAppBar(),
+                      SizedBox(
+                        height: 10.h,
+                      ),
+                      Center(
+                        child: Text(
+                          "Taste the World,",
+                          style: AppTextStyles.heading,
+                        ),
+                      ),
+                      Center(
+                        child: Text(
+                          "Right Here at Homes",
+                          style: AppTextStyles.heading,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10.h,
+                      ),
+                      const AppSearchBar(),
+                      Text(
+                        'Our Restaurants',
                         style: AppTextStyles.heading,
                       ),
-                    ),
-                    Center(
-                      child: Text(
-                        "Right Here at Homes",
-                        style: AppTextStyles.heading,
-                        textAlign: TextAlign.center,
+                      SizedBox(
+                        height: 10.h,
                       ),
-                    ),
-                    SizedBox(
-                      height: 10.h,
-                    ),
-                    const AppSearchBar(),
-                    Text(
-                      'Our Restaurants',
-                      style: AppTextStyles.heading,
-                    ),
-                    SizedBox(
-                      height: 10.h,
-                    ),
-                    ListView.builder(
-                        scrollDirection: Axis.vertical,
-                        shrinkWrap: true,
-                        itemCount: restaurantsProvider.restaurants.length,
-                        itemBuilder: (context, index) {
-                          return RestaurantCard(
-                            restuarant: restaurantsProvider.restaurants[index],
-                          );
-                        })
-                  ],
+                      ListView.builder(
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          itemCount: restaurantsProvider.restaurants.length,
+                          itemBuilder: (context, index) {
+                            return RestaurantCard(
+                              restuarant:
+                                  restaurantsProvider.restaurants[index],
+                            );
+                          })
+                    ],
+                  ),
                 ),
               ),
             );
