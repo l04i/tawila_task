@@ -24,7 +24,10 @@ class IconContainer extends StatelessWidget {
 }
 
 class AppSearchBar extends StatelessWidget {
-  const AppSearchBar({super.key});
+  final TextEditingController controller;
+  final Function onChanged;
+  const AppSearchBar(
+      {super.key, required this.controller, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +36,8 @@ class AppSearchBar extends StatelessWidget {
       height: 70.h,
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
       child: TextFormField(
+          onChanged: (keyword) => onChanged(keyword),
+          controller: controller,
           decoration: InputDecoration(
               prefixIconColor: AppColors.icons,
               prefixIcon: const Icon(

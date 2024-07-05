@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:tawila_task/constants.dart';
+import 'package:tawila_task/models/restaurant.dart';
 import 'package:tawila_task/providers/restaurants_provider.dart';
 import 'package:tawila_task/view/reusable_widgets.dart';
 
@@ -13,6 +14,14 @@ class RestaurantsScreen extends StatefulWidget {
 }
 
 class _RestaurantsScreenState extends State<RestaurantsScreen> {
+  TextEditingController searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -24,6 +33,7 @@ class _RestaurantsScreenState extends State<RestaurantsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    searchController.addListener(() {});
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -70,7 +80,11 @@ class _RestaurantsScreenState extends State<RestaurantsScreen> {
                       SizedBox(
                         height: 10.h,
                       ),
-                      const AppSearchBar(),
+                      AppSearchBar(
+                        onChanged: (keyword) => _searchRestaurants(
+                            context, keyword, restaurantsProvider.restaurants),
+                        controller: searchController,
+                      ),
                       Text(
                         'Our Restaurants',
                         style: AppTextStyles.heading,
@@ -82,11 +96,12 @@ class _RestaurantsScreenState extends State<RestaurantsScreen> {
                           scrollDirection: Axis.vertical,
                           shrinkWrap: true,
                           physics: const AlwaysScrollableScrollPhysics(),
-                          itemCount: restaurantsProvider.restaurants.length,
+                          itemCount:
+                              restaurantsProvider.filteredRestaurants.length,
                           itemBuilder: (context, index) {
                             return RestaurantCard(
-                              restuarant:
-                                  restaurantsProvider.restaurants[index],
+                              restuarant: restaurantsProvider
+                                  .filteredRestaurants[index],
                             );
                           })
                     ],
@@ -124,4 +139,17 @@ class CustomAppBar extends StatelessWidget {
 Future<void> _getRestaurants(BuildContext context) async {
   await Provider.of<RestaurantsProvider>(context, listen: false)
       .getRestaurants();
+}
+
+void _searchRestaurants(
+    BuildContext context, String keyword, List<Restaurant> restaurants) {
+  Provider.of<RestaurantsProvider>(context, listen: false)
+      .updateFilteredRestaurants(restaurants);
+  final filteredRestaurants = restaurants.where((restaurant) {
+    final restaurantName = restaurant.name!.toLowerCase();
+    final input = keyword.toLowerCase();
+    return restaurantName.contains(input);
+  }).toList();
+  Provider.of<RestaurantsProvider>(context, listen: false)
+      .updateFilteredRestaurants(filteredRestaurants);
 }
