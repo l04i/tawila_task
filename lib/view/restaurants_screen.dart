@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -15,39 +17,45 @@ class RestaurantsScreen extends StatefulWidget {
 
 class _RestaurantsScreenState extends State<RestaurantsScreen> {
   TextEditingController searchController = TextEditingController();
+  bool _isError = false;
+
+  Timer? _debounce;
 
   @override
   void dispose() {
     searchController.dispose();
+    _debounce?.cancel();
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
-
+    final restaurantsProvider =
+        Provider.of<RestaurantsProvider>(context, listen: false);
     Future.delayed(Duration.zero, () {
-      _getRestaurants(context);
+      _getRestaurants(restaurantsProvider);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    searchController.addListener(() {});
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Consumer<RestaurantsProvider>(
             builder: (context, restaurantsProvider, child) {
+          _isError = restaurantsProvider.errorMessage != null;
+
           if (restaurantsProvider.isLoading) {
             return const Center(
                 child: CircularProgressIndicator(
               color: AppColors.primary,
             ));
-          } else if (restaurantsProvider.errorMessage != null) {
+          } else if (_isError) {
             return ErrorMessageView(
               errorMessage: restaurantsProvider.errorMessage!,
-              refresh: () => _getRestaurants(context),
+              refresh: () => _getRestaurants(restaurantsProvider),
             );
           } else {
             return Padding(
@@ -55,7 +63,7 @@ class _RestaurantsScreenState extends State<RestaurantsScreen> {
               child: RefreshIndicator(
                 backgroundColor: AppColors.secondary,
                 color: AppColors.primary,
-                onRefresh: () => _getRestaurants(context),
+                onRefresh: () => _getRestaurants(restaurantsProvider),
                 child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,10 +89,17 @@ class _RestaurantsScreenState extends State<RestaurantsScreen> {
                         height: 10.h,
                       ),
                       AppSearchBar(
-                        onChanged: (keyword) => _searchRestaurants(
-                            context, keyword, restaurantsProvider.restaurants),
-                        controller: searchController,
-                      ),
+                          controller: searchController,
+                          onChanged: (keyword) {
+                            if (_debounce?.isActive ?? false) {
+                              _debounce?.cancel();
+                            }
+                            _debounce =
+                                Timer(const Duration(milliseconds: 500), () {
+                              _searchRestaurants(restaurantsProvider, keyword,
+                                  restaurantsProvider.restaurants);
+                            });
+                          }),
                       Text(
                         'Our Restaurants',
                         style: AppTextStyles.heading,
@@ -92,7 +107,10 @@ class _RestaurantsScreenState extends State<RestaurantsScreen> {
                       SizedBox(
                         height: 10.h,
                       ),
-                      ListView.builder(
+                      ListView.separated(
+                          separatorBuilder: (context, index) => SizedBox(
+                                height: 10.h,
+                              ),
                           scrollDirection: Axis.vertical,
                           shrinkWrap: true,
                           physics: const AlwaysScrollableScrollPhysics(),
@@ -116,40 +134,17 @@ class _RestaurantsScreenState extends State<RestaurantsScreen> {
   }
 }
 
-class CustomAppBar extends StatelessWidget {
-  const CustomAppBar({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const IconContainer(icon: Icons.menu),
-        Image.asset(
-          "assets/images/tawila_logo.png",
-          height: 75.h,
-          width: 75.w,
-        ),
-        const IconContainer(icon: Icons.notifications),
-      ],
-    );
-  }
+Future<void> _getRestaurants(RestaurantsProvider restaurantsProvider) async {
+  await restaurantsProvider.getRestaurants();
 }
 
-Future<void> _getRestaurants(BuildContext context) async {
-  await Provider.of<RestaurantsProvider>(context, listen: false)
-      .getRestaurants();
-}
-
-void _searchRestaurants(
-    BuildContext context, String keyword, List<Restaurant> restaurants) {
-  Provider.of<RestaurantsProvider>(context, listen: false)
-      .updateFilteredRestaurants(restaurants);
+void _searchRestaurants(RestaurantsProvider restaurantsProvider, String keyword,
+    List<Restaurant> restaurants) {
+  restaurantsProvider.updateFilteredRestaurants(restaurants);
   final filteredRestaurants = restaurants.where((restaurant) {
     final restaurantName = restaurant.name!.toLowerCase();
     final input = keyword.toLowerCase();
     return restaurantName.contains(input);
   }).toList();
-  Provider.of<RestaurantsProvider>(context, listen: false)
-      .updateFilteredRestaurants(filteredRestaurants);
+  restaurantsProvider.updateFilteredRestaurants(filteredRestaurants);
 }

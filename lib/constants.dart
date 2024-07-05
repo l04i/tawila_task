@@ -38,3 +38,7 @@ class AppTextStyles {
     color: AppColors.secondary,
   );
 }
+
+class AppAssets {
+  static const String appLogo = 'assets/images/tawila_logo.png';
+}

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tawila_task/constants.dart';
@@ -43,8 +44,13 @@ class AppSearchBar extends StatelessWidget {
               prefixIcon: const Icon(
                 Icons.search,
               ),
+              enabledBorder: OutlineInputBorder(
+                  borderSide:
+                      BorderSide(color: AppColors.secondary, width: 5.w),
+                  borderRadius: BorderRadius.circular(30.r)),
               focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: AppColors.secondary),
+                  borderSide:
+                      BorderSide(color: AppColors.secondary, width: 5.w),
                   borderRadius: BorderRadius.circular(30.r)),
               suffixIconColor: AppColors.primary,
               suffixIcon: const Icon(
@@ -67,59 +73,53 @@ class RestaurantCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 10.h),
-          height: 250.h,
-          width: double.infinity,
-          decoration: BoxDecoration(
-              color: AppColors.accent,
-              borderRadius: BorderRadius.circular(20.r)),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 10.h),
+      height: 250.h,
+      width: double.infinity,
+      decoration: BoxDecoration(
+          color: AppColors.accent, borderRadius: BorderRadius.circular(30.r)),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: CachedNetworkImage(
+              imageUrl: restuarant.photoUrl!,
+              height: 150.h,
+              width: 150.w,
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Center(
-                child: Image.network(
-                  restuarant.photoUrl!,
-                  height: 150.h,
-                  width: 150.w,
-                ),
+              Text(
+                restuarant.name!,
+                style: AppTextStyles.heading,
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    restuarant.name!,
-                    style: AppTextStyles.heading,
+                  const Icon(
+                    Icons.star,
+                    color: AppColors.primary,
                   ),
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.star,
-                        color: AppColors.primary,
-                      ),
-                      SizedBox(
-                        width: 5.w,
-                      ),
-                      Text(
-                        restuarant.rating!,
-                        style: AppTextStyles.subHeading,
-                      )
-                    ],
+                  SizedBox(
+                    width: 5.w,
+                  ),
+                  Text(
+                    restuarant.rating!,
+                    style: AppTextStyles.subHeading,
                   )
                 ],
-              ),
-              Text(
-                restuarant.description!,
-                style: AppTextStyles.body.copyWith(color: Colors.white),
-              ),
+              )
             ],
           ),
-        ),
-        SizedBox(height: 10.h),
-      ],
+          Text(
+            restuarant.description!,
+            style: AppTextStyles.body.copyWith(color: Colors.white),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -153,6 +153,26 @@ class ErrorMessageView extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class CustomAppBar extends StatelessWidget {
+  const CustomAppBar({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const IconContainer(icon: Icons.menu),
+        Image.asset(
+          AppAssets.appLogo,
+          height: 75.h,
+          width: 75.w,
+        ),
+        const IconContainer(icon: Icons.notifications),
+      ],
     );
   }
 }
