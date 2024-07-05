@@ -1,16 +1,25 @@
-# tawila_task
+# Tawila Task App
 
-A new Flutter project.
+This repository contains the source code for a mobile application developed as a submission for the Mobile Application Developer role at Tawila.
 
-## Getting Started
+## Description
 
-This project is a starting point for a Flutter application.
+The Restaurant Finder App is a Flutter-based mobile application designed to display a list of restaurants using a backend API provided by Tawila. It features a user-friendly interface, responsive design, and several key functionalities aimed at enhancing the user experience.
 
-A few resources to get you started if this is your first Flutter project:
+## Features
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- **MVVM Architecture:** Implemented using Model-View-ViewModel for clear separation of concerns.
+- **Repository Pattern:** Organized data handling and management with the Repository pattern.
+- **Search Functionality:** Enables users to search for restaurants by name.
+- **Pull-to-Refresh:** Allows users to refresh the restaurant list with a simple swipe gesture.
+- **Caching:** Implements local data caching for improved performance and offline access.
+- **Responsive Design:** Ensures compatibility and usability across various screen sizes and orientations.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Technologies Used
+
+- **Flutter SDK 3.22:** Framework for building cross-platform applications.
+- **Packages:**
+  - `cached_network_image`: Efficiently loads and caches images from the network.
+  - `flutter_screenutil`: Provides responsive UI design principles.
+  - `Provider`: State management for Flutter applications.
+  - `http`: HTTP client for making requests to the backend API.
