@@ -4,10 +4,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class AppColors {
   static const Color primary = Color(0xFFFACC15);
   static const Color accent = Color(0xFFF87171);
-  static const Color secondary = Color(0xFF797980);
+  static const Color secondary = Color(0xFFFAFAFA);
   static const Color background = Color(0xFFF3F4F6);
   static const Color lightBackground = Color(0xFFF3F4F6);
   static const Color text = Color(0xFF202020);
+  static const Color icons = Color(0xFF202020);
 }
 
 class AppTextStyles {
