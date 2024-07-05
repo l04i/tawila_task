@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:tawila_task/constants.dart';
 import 'package:tawila_task/providers/restaurants_provider.dart';
 import 'package:tawila_task/repositories/restaurants_repo.dart';
 import 'package:tawila_task/services/api_service.dart';
@@ -24,23 +23,12 @@ class MyApp extends StatelessWidget {
                       RestaurantsRepository(apiService: ApiService())))
         ],
         child: ScreenUtilInit(
-            designSize: const Size(360, 690), // Todo: change this
+            designSize: const Size(360, 690),
             minTextAdapt: true,
             splitScreenMode: true,
             builder: (_, child) {
-              return MaterialApp(
-                  title: 'Tawila Restaurants',
-                  theme: ThemeData(
-                    primaryColor: AppColors.primary,
-                    buttonTheme: ButtonThemeData(
-                      buttonColor: AppColors.primary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.r),
-                      ),
-                      textTheme: ButtonTextTheme.primary,
-                    ),
-                  ),
-                  home: const SplashScreen());
+              return const MaterialApp(
+                  title: 'Tawila Restaurants', home: SplashScreen());
             }));
   }
 }

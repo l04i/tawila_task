@@ -94,7 +94,7 @@ class RestaurantCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                restuarant.name!,
+                restuarant.name,
                 style: AppTextStyles.heading,
               ),
               Row(
@@ -115,7 +115,7 @@ class RestaurantCard extends StatelessWidget {
             ],
           ),
           Text(
-            restuarant.description!,
+            restuarant.description,
             style: AppTextStyles.body.copyWith(color: Colors.white),
           ),
         ],
@@ -138,9 +138,7 @@ class ErrorMessageView extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           GestureDetector(
-            onTap: () {
-              refresh;
-            },
+            onTap: () => refresh(),
             child: Icon(
               Icons.refresh,
               color: AppColors.primary,

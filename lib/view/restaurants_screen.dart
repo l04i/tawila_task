@@ -142,7 +142,7 @@ void _searchRestaurants(RestaurantsProvider restaurantsProvider, String keyword,
     List<Restaurant> restaurants) {
   restaurantsProvider.updateFilteredRestaurants(restaurants);
   final filteredRestaurants = restaurants.where((restaurant) {
-    final restaurantName = restaurant.name!.toLowerCase();
+    final restaurantName = restaurant.name.toLowerCase();
     final input = keyword.toLowerCase();
     return restaurantName.contains(input);
   }).toList();
