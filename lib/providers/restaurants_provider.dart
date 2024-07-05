@@ -17,13 +17,14 @@ class RestaurantsProvider extends ChangeNotifier {
 
   Future<void> getRestaurants() async {
     _isLoading = true;
+    _errorMessage = null;
     notifyListeners();
 
     try {
       _restuarants = await restaurantRepository.getRestaurants();
     } catch (e) {
       _errorMessage =
-          'Loading Failed, Check you internet connectivity and try again';
+          'Loading Failed, Check your internet connectivity and tap on the icon';
     } finally {
       _isLoading = false;
       notifyListeners();
