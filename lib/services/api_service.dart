@@ -8,7 +8,9 @@ class ApiService {
   static const String restaurantsEndpoint = '/api/v1/restaurants/';
 
   Future<List<Restaurant>> getRestaurants() async {
-    final response = await http.get(Uri.parse(baseUrl + restaurantsEndpoint));
+    final response = await http
+        .get(Uri.parse(baseUrl + restaurantsEndpoint))
+        .timeout(const Duration(seconds: 10));
 
     if (response.statusCode == 200) {
       List json = jsonDecode(response.body);

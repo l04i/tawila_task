@@ -1,63 +1,101 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+
 import 'package:tawila_task/constants.dart';
+import 'package:tawila_task/models/restaurant.dart';
+import 'package:tawila_task/providers/restaurants_provider.dart';
 
 // color issue (icons , container , fouced border)
 // font bold issue
 
-class RestaurantsScreen extends StatelessWidget {
+class RestaurantsScreen extends StatefulWidget {
   const RestaurantsScreen({super.key});
+
+  @override
+  State<RestaurantsScreen> createState() => _RestaurantsScreenState();
+}
+
+class _RestaurantsScreenState extends State<RestaurantsScreen> {
+  @override
+  void initState() {
+    super.initState();
+
+    Future.delayed(Duration.zero, () {
+      _getRestaurants(context);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all(10.h),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const CustomAppBar(),
-                SizedBox(
-                  height: 10.h,
+        child: Consumer<RestaurantsProvider>(
+            builder: (context, restaurantsProvider, child) {
+          if (restaurantsProvider.isLoading) {
+            return const Center(
+                child: CircularProgressIndicator(
+              color: AppColors.primary,
+            ));
+          } else if (restaurantsProvider.errorMessage != null) {
+            return Center(
+              child: Text(
+                restaurantsProvider.errorMessage!,
+                style: AppTextStyles.heading,
+              ),
+            );
+          } else {
+            return Padding(
+              padding: EdgeInsets.all(10.h),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const CustomAppBar(),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    Center(
+                      child: Text(
+                        "Taste the World,",
+                        style: AppTextStyles.heading,
+                      ),
+                    ),
+                    Center(
+                      child: Text(
+                        "Right Here at Homes",
+                        style: AppTextStyles.heading,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    const SearchBar(),
+                    Text(
+                      'Our Restaurants',
+                      style: AppTextStyles.heading,
+                    ),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    ListView.builder(
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        itemCount: restaurantsProvider.restaurants.length,
+                        itemBuilder: (context, index) {
+                          return RestaurantCard(
+                            restuarant: restaurantsProvider.restaurants[index],
+                          );
+                        })
+                  ],
                 ),
-                Center(
-                  child: Text(
-                    "Taste the World,",
-                    style: AppTextStyles.heading,
-                  ),
-                ),
-                Center(
-                  child: Text(
-                    "Right Here at Homes",
-                    style: AppTextStyles.heading,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                SizedBox(
-                  height: 10.h,
-                ),
-                const SearchBar(),
-                Text(
-                  'Our Restaurants',
-                  style: AppTextStyles.heading,
-                ),
-                SizedBox(
-                  height: 10.h,
-                ),
-                ListView.builder(
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    itemCount: 2,
-                    itemBuilder: (context, index) {
-                      return RestaurantCard();
-                    })
-              ],
-            ),
-          ),
-        ),
+              ),
+            );
+          }
+        }),
       ),
     );
   }
@@ -134,7 +172,11 @@ class SearchBar extends StatelessWidget {
 }
 
 class RestaurantCard extends StatelessWidget {
-  const RestaurantCard({super.key});
+  final Restaurant restuarant;
+  const RestaurantCard({
+    super.key,
+    required this.restuarant,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -153,7 +195,7 @@ class RestaurantCard extends StatelessWidget {
             children: [
               Center(
                 child: Image.network(
-                  "https://ucarecdn.com/d61da33b-8770-4a3c-ad9f-bc8046bcc4f7/-/preview/500x500/",
+                  restuarant.photoUrl!,
                   height: 150.h,
                   width: 150.w,
                 ),
@@ -162,7 +204,7 @@ class RestaurantCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Julia",
+                    restuarant.name!,
                     style: AppTextStyles.heading,
                   ),
                   Row(
@@ -175,7 +217,7 @@ class RestaurantCard extends StatelessWidget {
                         width: 5.w,
                       ),
                       Text(
-                        "5.00",
+                        restuarant.rating!,
                         style: AppTextStyles.subHeading,
                       )
                     ],
@@ -183,7 +225,7 @@ class RestaurantCard extends StatelessWidget {
                 ],
               ),
               Text(
-                "Never had Lebanese food?",
+                restuarant.description!,
                 style: AppTextStyles.body.copyWith(color: Colors.white),
               ),
             ],
@@ -193,4 +235,9 @@ class RestaurantCard extends StatelessWidget {
       ],
     );
   }
+}
+
+Future<void> _getRestaurants(BuildContext context) async {
+  await Provider.of<RestaurantsProvider>(context, listen: false)
+      .getRestaurants();
 }

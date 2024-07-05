@@ -22,7 +22,8 @@ class RestaurantsProvider extends ChangeNotifier {
     try {
       _restuarants = await restaurantRepository.getRestaurants();
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage =
+          'Loading Failed, Check you internet connectivity and try again';
     } finally {
       _isLoading = false;
       notifyListeners();
